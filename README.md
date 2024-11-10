@@ -25,8 +25,8 @@ Setting up Kafka with Docker simplifies deployment. In this setup, we use both K
 Step 1: Create a Docker Compose File
 Create a docker-compose.yml file for easy setup and configuration:
 
-yaml
-Copy code
+```yaml
+
 version: '3'
 services:
   zookeeper:
@@ -48,21 +48,21 @@ services:
       - "9092:9092"
 Step 2: Start Kafka and Zookeeper Containers
 Run the following command to start the containers:
-
-bash
-Copy code
+```
+```bash
 docker-compose up -d
+```
 Step 3: Verify the Setup
 Check if Kafka is running by listing the topics:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --list --bootstrap-server localhost:9092
+```
 ## 3. Core Kafka Concepts
 Partitions
 A partition is a unit of parallelism in Kafka, enabling data to be split and processed in parallel by multiple consumers. Topics can be divided into multiple partitions.
 
-Consumers and Consumer Groups
+### Consumers and Consumer Groups
 Consumer: Consumes messages from a Kafka topic.
 Consumer Group: Multiple consumers in a group can consume messages from different partitions of the same topic. Kafka ensures each partition is read by only one consumer in a group for load distribution.
 Leaders, Replicas, and ISR
@@ -75,16 +75,15 @@ Producer Setup:
 
 Dependencies:
 
-xml
-Copy code
+```xml
 <dependency>
     <groupId>org.springframework.kafka</groupId>
     <artifactId>spring-kafka</artifactId>
 </dependency>
-Producer Configuration:
+```
+### Producer Configuration:
 
-java
-Copy code
+```java
 @Configuration
 public class KafkaProducerConfig {
     @Bean
@@ -101,10 +100,10 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 }
-Send Message:
+```
+### Send Message:
 
-java
-Copy code
+```java
 @Service
 public class KafkaProducerService {
     @Autowired
@@ -114,12 +113,12 @@ public class KafkaProducerService {
         kafkaTemplate.send(topic, message);
     }
 }
-Consumer Setup:
+```
+### Consumer Setup:
 
 Consumer Configuration:
 
-java
-Copy code
+```java
 @Configuration
 public class KafkaConsumerConfig {
     @Bean
@@ -139,10 +138,11 @@ public class KafkaConsumerConfig {
         return factory;
     }
 }
+```
 Listener:
 
-java
-Copy code
+```java
+
 @Service
 public class KafkaConsumerService {
     @KafkaListener(topics = "my-topic", groupId = "my-consumer-group")
@@ -150,20 +150,21 @@ public class KafkaConsumerService {
         System.out.println("Received Message: " + message);
     }
 }
-Handling Multiple Partitions and Consumers
+```
+### Handling Multiple Partitions and Consumers
 Creating a Topic with Partitions:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --create --topic my-topic --partitions 3 --replication-factor 1 --bootstrap-server localhost:9092
+```
 Consumer Group Balancing: When multiple instances of the consumer (e.g., by running multiple Spring Boot application instances) are started, Kafka will balance partitions across the consumers.
 
 ## 5. Troubleshooting and Best Practices
 Increasing Partitions: If needed, you can add more partitions to an existing topic:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --alter --topic my-topic --partitions 5 --bootstrap-server localhost:9092
+```
 Monitoring: Monitor Kafka logs and consumer lag to understand performance and potential bottlenecks.
 
 Avoid High Replication Factor on Single Node: In a single-node setup, keep replication-factor as 1 to avoid errors.
@@ -172,17 +173,16 @@ Avoid High Replication Factor on Single Node: In a single-node setup, keep repli
 Useful Kafka CLI Commands
 List Topics:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --list --bootstrap-server localhost:9092
+```
 Describe Topic:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --describe --topic my-topic --bootstrap-server localhost:9092
+```
 Delete Topic:
 
-bash
-Copy code
+```bash
 docker exec -it <kafka_container_id> kafka-topics --delete --topic my-topic --bootstrap-server localhost:9092
-This document provides a comprehensive guide to setting up and working with Kafka in a Java Spring Boot environment using Docker.
+```
